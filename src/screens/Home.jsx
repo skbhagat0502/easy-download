@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BuyMeACoffee from "../components/BuyMeACoffe/BuyMeACoffe";
 
 const Home = () => {
@@ -8,7 +8,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
-
+  const [formats, setFormats] = useState([]);
   const handleDownload = async () => {
     if (!urlValue) {
       setError("Please enter a YouTube video URL.");
@@ -31,6 +31,23 @@ const Home = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (data && data.info) {
+      const arr = data.info;
+      const requiredFormats = arr.filter((a) =>
+        a.mimeType.split(";")[0].includes("mp4")
+      );
+
+      const uniqueFormats = Array.from(
+        new Set(requiredFormats.map((a) => a.qualityLabel))
+      ).map((qualityLabel) => {
+        return requiredFormats.find((a) => a.qualityLabel === qualityLabel);
+      });
+
+      setFormats(uniqueFormats);
+    }
+  }, [data]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-start">
@@ -72,7 +89,7 @@ const Home = () => {
               />
             </div>
             <div className="grid max-[550px]:grid-cols-2 min-[550px]:grid-cols-3 gap-2">
-              {data.info.map((format, index) => (
+              {formats?.map((format, index) => (
                 <div
                   key={index}
                   className="bg-gray-800 text-white rounded-lg p-4 flex flex-col items-center"
@@ -85,7 +102,7 @@ const Home = () => {
                       ? `${format.height}p Audio+Video`
                       : format.hasAudio
                       ? "Audio only"
-                      : "Video only"}
+                      : `${format.height}p Video only`}
                   </p>
                   <a
                     target="_blank"
