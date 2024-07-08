@@ -3,12 +3,19 @@ import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <nav className="bg-gray-800 p-4">
+    <nav className="bg-gray-800 p-4 h-20">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-white text-xl font-bold">
-          <NavLink to="/">YT Download</NavLink>
+          <NavLink to="/">
+            <img
+              src="logo.png"
+              alt="logo"
+              className="w-32 rounded-full circular-mask absolute top-[-1.6rem]"
+            />
+          </NavLink>
         </div>
-        <ul className="flex space-x-4">
+
+        <ul className="flex space-x-4 mt-[0.5rem]">
           <li>
             <NavLink
               to="/"

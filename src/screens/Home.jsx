@@ -7,6 +7,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
+
   const handleDownload = async () => {
     if (!urlValue) {
       setError("Please enter a YouTube video URL.");
@@ -16,7 +17,9 @@ const Home = () => {
     setError("");
 
     try {
-      const response = await axios.get(`${baseUrl}/download?url=${urlValue}`);
+      const response = await axios.get(`${baseUrl}/download`, {
+        params: { url: urlValue },
+      });
       setData(response.data);
       setUrlValue("");
     } catch (err) {
@@ -32,11 +35,9 @@ const Home = () => {
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-start">
       <main className="flex-grow flex flex-col items-center justify-start px-4 mt-[5rem]">
         <div className="flex flex-row items-center mb-8">
-          <div className="text-4xl font-bold">
-            <h1 className="w-full text-center">
-              <span className="text-red-700">YouTube</span> Video Downloader
-            </h1>
-          </div>
+          <h1 className="text-4xl font-bold text-center w-full">
+            <span className="text-red-700">YouTube</span> Video Downloader
+          </h1>
         </div>
         <div className="flex flex-row max-[550px]:flex-col max-[550px]:gap-4 mb-4">
           <input
@@ -57,37 +58,41 @@ const Home = () => {
           </button>
         </div>
         {error && <p className="text-red-600">{error}</p>}
-        {data !== null ? (
-          <div className="mt-4 w-full flex flex-col items-center justify-start">
+        {data && (
+          <div className="my-4 w-full flex flex-col items-center justify-start">
             <div className="my-4">
               <iframe
                 width="570"
                 height="320"
-                src={`${data.url}`}
+                className="max-[550px]:w-[95vw]"
+                src={`https://www.youtube.com/embed/${data.videoId}`}
                 title="video"
                 allowFullScreen
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {data.info.map((formatName, index) => (
+            <div className="grid max-[550px]:grid-cols-2 min-[550px]:grid-cols-3 gap-2">
+              {data.info.map((format, index) => (
                 <div
                   key={index}
                   className="bg-gray-800 text-white rounded-lg p-4 flex flex-col items-center"
                 >
                   <p className="text-lg font-bold mb-2">
-                    {formatName.mimeType.split(";")[0]}
+                    {format.mimeType.split(";")[0]}
                   </p>
                   <p className="text-gray-400 mb-4">
-                    {formatName.hasVideo
-                      ? `${formatName.height}p`
-                      : "Audio only"}
+                    {format.hasVideo && format.hasAudio
+                      ? `${format.height}p Audio+Video`
+                      : format.hasAudio
+                      ? "Audio only"
+                      : "Video only"}
                   </p>
                   <a
-                    href={formatName.url}
                     target="_blank"
-                    rel="noopener noreferrer"
-                    download
-                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md font-bold"
+                    href={format.url}
+                    className={`bg-black text-yellow-500 py-2 px-6 rounded-md font-bold ${
+                      isLoading ? "cursor-not-allowed" : "cursor-pointer"
+                    }`}
+                    disabled={isLoading}
                   >
                     Download
                   </a>
@@ -95,8 +100,11 @@ const Home = () => {
               ))}
             </div>
           </div>
-        ) : (
-          <div className="text-red-700 font-bold mt-10">No download yet</div>
+        )}
+        {!data && (
+          <div className="text-white font-bold mt-10">
+            Enter a YouTube video URL and hit the download button.
+          </div>
         )}
       </main>
       <footer className="w-full py-6 bg-gray-800">
