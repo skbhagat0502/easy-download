@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import BuyMeACoffee from "../components/BuyMeACoffe/BuyMeACoffe";
 
 const Home = () => {
   const [urlValue, setUrlValue] = useState("");
@@ -107,6 +108,7 @@ const Home = () => {
           </div>
         )}
       </main>
+      <BuyMeACoffee />
       <footer className="w-full py-6 bg-gray-800">
         <div className="container mx-auto text-center text-gray-400">
           &copy; 2024 YouTube Downloader. All rights reserved.
