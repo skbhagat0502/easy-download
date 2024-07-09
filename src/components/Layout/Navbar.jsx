@@ -10,7 +10,7 @@ const Navbar = () => {
             <img
               src="logo.png"
               alt="logo"
-              className="w-32 rounded-full circular-mask absolute top-[-1.6rem]"
+              className="w-32 rounded-full circular-mask absolute top-[-1.6rem] max-[550px]:left-[-1rem]"
             />
           </NavLink>
         </div>
